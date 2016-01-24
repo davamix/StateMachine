@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
+using Xunit;
 
 
 namespace StateMachine.Test
@@ -13,9 +7,8 @@ namespace StateMachine.Test
 	public class Engine
 	{
 		private StateMachine.Engine _engine;
-
-		[SetUp]
-		public void SetUp()
+		
+		public Engine()
 		{
 			_engine = new StateMachine.Engine(@"Data\workflow.xml")
 			          {
@@ -23,13 +16,13 @@ namespace StateMachine.Test
 			          };
 		}
 
-		[Test]
+		[Fact]
 		public void InitialStateIsStart()
 		{
-			Assert.That(_engine.CurrentState, Is.EqualTo("start"));
+			Assert.Equal("start", _engine.CurrentState);
 		}
 
-		[Test]
+		[Fact]
 		public void ThereAreThreeCommandsForPendingApprovalStatus()
 		{
 			var commands = new Dictionary<string, string>
@@ -38,67 +31,67 @@ namespace StateMachine.Test
 				               {"approved", "toApproved"},
 				               {"denied", "toDenied"}
 			               };
-			
-			CollectionAssert.AreEquivalent(_engine.GetAvailableCommands("pendingApproval"), commands);
+			var actual = _engine.GetAvailableCommands("pendingApproval");
+			Assert.Equal(commands, actual);
 		}
 
 		#region Test of state changes
 
-		[Test]
+		[Fact]
 		public void FromStartToNotSubmitted()
 		{
 			FromStateToState("start", "notSubmitted", "toNotSubmitted");
 		}
 
-		[Test]
+		[Fact]
 		public void FromNotSubmittedToSubmitted()
 		{
 			FromStateToState("notSubmitted", "submitted", "toSubmitted");
 		}
 
-		[Test]
+		[Fact]
 		public void FromSubmittedToPendingApproval()
 		{
 			FromStateToState("submitted", "pendingApproval", "toPendingApproval");
 		}
 
-		[Test]
+		[Fact]
 		public void FromPendingApprovalToChangeRequested()
 		{
 			FromStateToState("pendingApproval", "changeRequested", "toChangeRequested");
 		}
 
-		[Test]
+		[Fact]
 		public void FromPendingApprovalToDenied()
 		{
 			FromStateToState("pendingApproval", "denied", "toDenied");
 		}
 
-		[Test]
+		[Fact]
 		public void FromPendingApprovalToApproved()
 		{
 			FromStateToState("pendingApproval", "approved", "toApproved");
 		}
 
-		[Test]
+		[Fact]
 		public void FromChangeRequestedToNotSubmitted()
 		{
 			FromStateToState("changeRequested", "notSubmitted", "toNotSubmitted");
 		}
 
-		[Test]
+		[Fact]
 		public void FromDeniedToCompleted()
 		{
 			FromStateToState("denied", "completed", "toCompleted");
 		}
 
-		[Test]
+		[Fact]
 		public void FromApprovedToCompleted()
 		{
 			FromStateToState("approved", "completed", "toCompleted");
 		}
 
-		[Test]
+		[Fact]
 		public void CannotMoveFromCompletedToAnyOther()
 		{
 			FromStateToStateRestricted("complted", "toStart");
@@ -122,8 +115,8 @@ namespace StateMachine.Test
 			_engine.CurrentState = initialState;
 			var moved = _engine.Next(inputState);
 
-			Assert.That(moved, Is.False);
-			Assert.That(_engine.CurrentState, Is.EqualTo(initialState));
+			Assert.False(moved);
+			Assert.Equal(initialState, _engine.CurrentState);
 		}
 
 
@@ -132,8 +125,8 @@ namespace StateMachine.Test
 			_engine.CurrentState = initialState;
 			var moved = _engine.Next(inputState);
 
-			Assert.That(moved, Is.True);
-			Assert.That(_engine.CurrentState, Is.EqualTo(finalState));
+			Assert.True(moved);
+			Assert.Equal(finalState, _engine.CurrentState);
 		}
 	}
 }

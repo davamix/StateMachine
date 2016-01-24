@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using StateMachine.StatesSource;
@@ -18,19 +19,33 @@ namespace StateMachine
 
 			LoadStates();
 		}
-
+		
 		public void LoadStates()
 		{
-			document = _statesSource.LoadStates();
+			try
+			{
+				document = _statesSource.LoadStates();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Error loading states", ex);
+			}
+			
+			
 		}
 		
-		public bool Next(string nextStep)
+		/// <summary>
+		/// Move the current state to the next one using the input value as a transition reference
+		/// </summary>
+		/// <param name="input">Value of the transition reference to move to the related state</param>
+		/// <returns>True if moved;</returns>
+		public bool Next(string input)
 		{
 			var state = document.Descendants("state")
 			                    .Elements("transition")
 			                    .FirstOrDefault(x =>
 			                                    x.Parent.Attribute("name").Value.Equals(CurrentState) &&
-			                                    x.Attribute("input").Value.Equals(nextStep));
+			                                    x.Attribute("input").Value.Equals(input));
 
 			if (state != null)
 			{
@@ -41,7 +56,11 @@ namespace StateMachine
 			return false;
 		}
 
-		public Dictionary<string, string> GetAvailableCommands()
+		/// <summary>
+		/// Get all available inputs
+		/// </summary>
+		/// <returns>Dictionary of State and Input</returns>
+		public Dictionary<string, string> GetAvailableInputs()
 		{
 			var commands = document.Descendants("state")
 			                       .Elements("transition");
@@ -51,11 +70,11 @@ namespace StateMachine
 		}
 
 		/// <summary>
-		/// Get available transition for the status
+		/// Get available inputs for the status
 		/// </summary>
-		/// <param name="status"></param>
-		/// <returns>State, Input</returns>
-		public Dictionary<string, string> GetAvailableCommands(string status)
+		/// <param name="status">Name of the status</param>
+		/// <returns>Dictionary of State and Input</returns>
+		public Dictionary<string, string> GetAvailableInputs(string status)
 		{
 			var retVal = new Dictionary<string, string>();
 
@@ -72,6 +91,10 @@ namespace StateMachine
 			return retVal;
 		}
 
+		/// <summary>
+		/// Get all states available
+		/// </summary>
+		/// <returns>List of name states</returns>
 		public IEnumerable<string> GetAvailableStates()
 		{
 			var states = document.Descendants("state").Attributes("name");

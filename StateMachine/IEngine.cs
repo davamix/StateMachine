@@ -10,9 +10,9 @@ namespace StateMachine
 		
 		bool Next(string nextStep);
 		
-		Dictionary<string, string> GetAvailableCommands();
+		Dictionary<string, string> GetAvailableInputs();
 		
-		Dictionary<string, string> GetAvailableCommands(string status);
+		Dictionary<string, string> GetAvailableInputs(string status);
 
 		IEnumerable<string> GetAvailableStates();
 	}

@@ -1,24 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using StateMachine.StatesSource;
 
 namespace StateMachine
 {
 	public class Engine : IEngine
 	{
+		private readonly IStatesSource _statesSource;
 		private XDocument document;
 
 		public string CurrentState { get; set; }
 
-		public Engine(string filePath)
+		public Engine(IStatesSource statesSource)
 		{
-			ReloadConfigurationFile(filePath);
+			_statesSource = statesSource;
 
+			LoadStates();
 		}
 
-		public void ReloadConfigurationFile(string filePath)
+		public void LoadStates()
 		{
-			document = XDocument.Load(filePath);
+			document = _statesSource.LoadStates();
 		}
 		
 		public bool Next(string nextStep)

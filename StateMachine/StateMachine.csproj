@@ -40,6 +40,8 @@
     <Compile Include="Engine.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatesSource\IStatesSource.cs" />
+    <Compile Include="StatesSource\StatesSourceXml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="workflow.xml" />

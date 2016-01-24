@@ -6,7 +6,7 @@ namespace StateMachine
 	{
 		string CurrentState { get; set; }
 		
-		void ReloadConfigurationFile(string filePath);
+		void LoadStates();
 		
 		bool Next(string nextStep);
 		

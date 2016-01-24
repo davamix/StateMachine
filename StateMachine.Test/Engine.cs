@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
+using StateMachine.StatesSource;
 using Xunit;
-
 
 namespace StateMachine.Test
 {
 	public class Engine
 	{
-		private StateMachine.Engine _engine;
+		private readonly IStatesSource _statesSource;
+		private readonly StateMachine.Engine _engine;
 		
 		public Engine()
 		{
-			_engine = new StateMachine.Engine(@"Data\workflow.xml")
+			_statesSource = new StatesSourceXml(@"Data\workflow.xml");
+
+			_engine = new StateMachine.Engine(_statesSource)
 			          {
 				          CurrentState = "start"
 			          };

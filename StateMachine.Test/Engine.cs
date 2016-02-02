@@ -34,7 +34,7 @@ namespace StateMachine.Test
 				               {"approved", "toApproved"},
 				               {"denied", "toDenied"}
 			               };
-			var actual = _engine.GetAvailableCommands("pendingApproval");
+			var actual = _engine.GetAvailableInputs("pendingApproval");
 			Assert.Equal(commands, actual);
 		}
 
